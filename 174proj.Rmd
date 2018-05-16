@@ -1,0 +1,20 @@
+---
+title: "timeseries"
+author: "174 group"
+date: "May 16, 2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+getwd()
+setwd("/Users/diANE/Desktop/school/PSTAT174")
+emissiondata<-read.csv("/Users/diANE/Desktop/school/PSTAT174/MER_T12_06.csv",header=TRUE)
+
+head(emissiondata)
+
+
+```
