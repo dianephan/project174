@@ -1,0 +1,57 @@
+---
+title: "PSTAT 174 - Final Project"
+author: "McLane Brown, Diane Phann, Dennis Wang, Davis Messer"
+date: "Spring 2018"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE,fig.align = "center")
+```
+
+```{r}
+library(dplyr)
+library(plyr)
+
+emissiondata<-read.csv("MER_T12_06.csv",header=TRUE, stringsAsFactors = FALSE)
+emissiondata = emissiondata[1:5]
+str(emissiondata)
+```
+
+
+
+```{r}
+dates <- t(sapply(emissiondata$YYYYMM, function(x) substring(x, first=c(1,5), last=c(4, 6))))
+dat <- cbind(emissiondata, dates)
+
+names(dat)[names(dat) == "1"] <- "Year"
+names(dat)[names(dat) == "2"] <- "Month"
+
+str(dat)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
