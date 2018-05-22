@@ -7,7 +7,7 @@ Total_Energy_Electric_Power <- ts(TXEIEUS[,3],start=c(1996,1),frequency=12) #Tim
 
 #Plotting original data
 par(mfrow=c(1,1))
-plot(Total_Energy_Electric_Power,main="Total Energy Electric Power CO2 Emission per Metric Ton") #Plotting time series
+plot(Total_Energy_Electric_Power,main="Total Energy Electric Power CO2 Emission per Million Metric Ton") #Plotting time series
 #Nonconstant variance
 par(mfrow = c(1,2))
 acf(Total_Energy_Electric_Power,lag.max = 60,main = "")
@@ -15,33 +15,40 @@ acf(Total_Energy_Electric_Power,lag.max = 60,main = "")
 pacf(Total_Energy_Electric_Power,lag.max = 60,main = "")
 title("Original Time Series", line = -1, outer=TRUE)
 var(Total_Energy_Electric_Power) #Very big variance
-
+max(Total_Energy_Electric_Power)
+min(Total_Energy_Electric_Power)
 #Detrending
 par(mfrow=c(1,1))
 t = 1:length(Total_Energy_Electric_Power)
 fit = lm(Total_Energy_Electric_Power ~ t)
 bcTransform = boxcox(Value ~ t,plotit = TRUE)
 #Lab03 since the CI includes 0, then BC transformation is log(data)
-lambda = bcTransform$x[which(bcTransform$y == max(bcTransform$y))] #Not needed
+lambda = bcTransform$x[which(bcTransform$y == max(bcTransform$y))] #Not needed [but stil useful]
+Total_Energy_Electric_Power.tr <- (1/lambda)*(Total_Energy_Electric_Power^lambda - 1)
 Total_Energy_Electric_Power.bc<-log(Total_Energy_Electric_Power)
-op <- par(mfrow = c(1,2))
+op <- par(mfrow = c(1,3))
 ts.plot(Total_Energy_Electric_Power,main = "Original data",ylab = expression(X[t]))
-ts.plot(Total_Energy_Electric_Power.bc,main = "Box-Cox tranformed data", ylab = expression(Y[t]))
+ts.plot(Total_Energy_Electric_Power.bc,main = "Box-Cox tranformed data-log", ylab = expression(Y[t]))
+ts.plot(Total_Energy_Electric_Power.tr,main = "Box-Cox tranformed data-lambda", ylab = expression(Y[t]))
+#As seen, the plots do not differ much from each other
 #B.C transformed ACF and PACF
+par(mfrow=c(1,2))
 acf(Total_Energy_Electric_Power.bc,lag.max = 60,main = "")
 pacf(Total_Energy_Electric_Power.bc,lag.max = 60,main = "")
 title("Box-Cox Transformed Time Series", line = -1, outer=TRUE)
 #It looks like significant correlation at every 12 lag and we can conclude seasonal component d=12
 #Comparing variance between the original and transformed
 var(Total_Energy_Electric_Power)
-var(Total_Energy_Electric_Power.bc) #Way much lower
+var(Total_Energy_Electric_Power.bc) #Way much lower - log trans
+var(Total_Energy_Electric_Power.tr) #The lowest variance - lambda transformation
 
-#Differencing once
+#Differencing once to remove trend
 par(mfrow=c(1,1))
-y1 = diff(Total_Energy_Electric_Power.bc, 1)
+y1 = diff(Total_Energy_Electric_Power.tr, 1)
 plot(y1,main = "De-trended Time Series at lag 1",ylab = expression(nabla~Y[t]))
 abline(h = 0,lty = 2)
 var(y1) #lower than B.C. no transformation
+var(diff(y1,1)) #Differencing more than once actually increase the variance, indicating over differencing
 
 # Diference at lag = 12 (cycle determined by the ACF) to remove seasonal component
 y12 = diff(y1, 12)
