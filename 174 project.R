@@ -22,8 +22,8 @@ par(mfrow=c(1,1))
 t = 1:length(Total_Energy_Electric_Power)
 fit = lm(Total_Energy_Electric_Power ~ t)
 bcTransform = boxcox(Value ~ t,plotit = TRUE)
-#Lab03 since the CI includes 0, then BC transformation is log(data)
-lambda = bcTransform$x[which(bcTransform$y == max(bcTransform$y))] #Not needed [but stil useful]
+#Lab03 since the CI includes 0, then BC transformation is lamda or log(data)
+lambda = bcTransform$x[which(bcTransform$y == max(bcTransform$y))]
 Total_Energy_Electric_Power.tr <- (1/lambda)*(Total_Energy_Electric_Power^lambda - 1)
 Total_Energy_Electric_Power.bc<-log(Total_Energy_Electric_Power)
 op <- par(mfrow = c(1,3))
@@ -44,9 +44,11 @@ var(Total_Energy_Electric_Power.tr) #The lowest variance - lambda transformation
 
 #Differencing once to remove trend
 par(mfrow=c(1,1))
-y1 = diff(Total_Energy_Electric_Power.tr, 1)
-plot(y1,main = "De-trended Time Series at lag 1",ylab = expression(nabla~Y[t]))
+y1 = diff(Total_Energy_Electric_Power.tr, 2)
+plot(y1,main = "De-trended Time Series at lag 2",ylab = expression(nabla~Y[t])) #quad
 abline(h = 0,lty = 2)
+acf(y1)
+pacf(y1)
 var(y1) #lower than B.C. no transformation
 var(diff(y1,1)) #Differencing more than once actually increase the variance, indicating over differencing
 
@@ -58,7 +60,7 @@ var(y12)
 # Re-calculate the sample variance and examine the ACF and PACF for first difference
 op = par(mfrow = c(1,2))
 acf(y1,lag.max = 60,main = "")
-pacf(y1,lag.max = 60,main = "")
+pacf(y1,lag.max = 60,main = "") #P is possibly 1
 title("De-trended Time Series", line = -1, outer=TRUE)
 
 # Re-calculate the sample variance and examine the ACF and PACF for 12th
