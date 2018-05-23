@@ -21,7 +21,7 @@ min(Total_Energy_Electric_Power)
 par(mfrow=c(1,1))
 t = 1:length(Total_Energy_Electric_Power)
 fit = lm(Total_Energy_Electric_Power ~ t)
-bcTransform = boxcox(Value ~ t,plotit = TRUE)
+bcTransform = boxcox(Total_Energy_Electric_Power ~ t,plotit = TRUE) #package qpcR
 #Lab03 since the CI includes 0, then BC transformation is lamda or log(data)
 lambda = bcTransform$x[which(bcTransform$y == max(bcTransform$y))]
 Total_Energy_Electric_Power.tr <- (1/lambda)*(Total_Energy_Electric_Power^lambda - 1)
@@ -47,10 +47,12 @@ par(mfrow=c(1,1))
 y1 = diff(Total_Energy_Electric_Power.tr, 2)
 plot(y1,main = "De-trended Time Series at lag 2",ylab = expression(nabla~Y[t])) #quad
 abline(h = 0,lty = 2)
-acf(y1)
-pacf(y1)
+acf(y1, main="")
+pacf(y1, main="")
 var(y1) #lower than B.C. no transformation
-var(diff(y1,1)) #Differencing more than once actually increase the variance, indicating over differencing
+var(diff(y1,1)) #Differencing more than once actually increase the variance, indicating over differencing 
+#Differencing more than once at lag of 1 increased variance
+#Differencinng more than once at lag of 2 actually lowered variance
 
 # Diference at lag = 12 (cycle determined by the ACF) to remove seasonal component
 y12 = diff(y1, 12)
