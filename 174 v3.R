@@ -1,21 +1,11 @@
-knitr :: opts_chunk$set ( echo = TRUE )
-install.packages(c("forecast","astsa" ,"TSA" ," GeneCycle " ," zoo " ," MASS " ," astsa " ," ggfortify " ," tseries " ," forecast " ,"
-tidyverse " ," ggplot2 ", " knitr ", " readr " ," ggpubr " ," ggridges " ," tibble " ," stringr " ," tidyr " ,"
-                    anytime " ," pracma " ," hydrostats ")) 
-#only do it once
-Packages = c ("forecast","astsa" ,"TSA" ," GeneCycle " ," zoo " ," MASS " ," astsa " ," ggfortify " ," tseries " ," forecast " ,"
-tidyverse " ," ggplot2 ", " knitr ", " readr " ," ggpubr " ," ggridges " ," tibble " ," stringr " ," tidyr " ,"
-anytime " ," pracma " ," hydrostats ")
+
 library(MASS)
 library(qpcR)
 library(stats)
 library(survMisc)
 library(ggplot2)
 library(ggpubr)
-invisible(lapply(Packages,library,character.only = TRUE ))
-knitr :: opts_chunk$set ( fig.width =7 , fig.height =5)
-options ( digits = 4)
-opts_chunk$set (tidy.opts = list ( width.cutoff =50) , tidy = TRUE )
+
 
 
 getwd()
@@ -75,7 +65,9 @@ for (P in c (0:3) ) {
     }
   }
 }
-AICc<-data.frame(AICc)
+
+# gives error and 12-13 warnings
+ AICc<-data.frame(AICc)
 # sort by AICc ( Increasing order)
 AICc_sorted<-AICc[order(AICc$X.AICc.),]
 # Filter the models by Shapiro test
@@ -116,10 +108,13 @@ fit=model1 #sarima (3,2,3)x(0,1,1)_12
 
 # Forecast and transfer to original scale
 library(forecast)
-forecast(ts, level=c(95))
 
-Box.test(resid1, type="Ljung")
-shapiro.test(resid1)
-Box.test(resid2, type="Ljung")
-shapiro.test(resid2)
+TXEIEUS2 <- read.csv("TXEIEUS2.csv",header=TRUE)
+ts2 <- ts(TXEIEUS2$Value,start=c(1996,1),frequency=12) # we include the actual values for 2016
+
+predict<-forecast(ts, level=c(95))
+autoplot(ts2,main="") + ylab("Carbon Emission Per metric Ton actual values")+xlab("Month")+theme(legend.position="None")
+autoplot(predict, main="") + ylab("Carbon Emission Per metric Ton predicted values")+xlab("Month")+theme(legend.position="None")
+
+
 
