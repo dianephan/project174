@@ -116,6 +116,8 @@ ggarrange ( p11 ,p22 , nrow = 2, ncol = 2) #ggpubr
 
 # choosing our fit
 fit=model1 #sarima (3,2,3)x(0,1,1)_12
+#Estimating coefficients
+model1$fit$coef
 
 # Forecast and transfer to original scale
 library(forecast)
