@@ -5,6 +5,8 @@ library(stats)
 library(survMisc)
 library(ggplot2)
 library(ggpubr)
+library(astsa)
+library(forecast)
 
 # read in data
 getwd()
