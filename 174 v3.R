@@ -88,6 +88,9 @@ AICc_cmp
 model1 = sarima(ts ,3 ,2 ,3 ,0 ,1 ,1 ,12) #astsa package
 model2 = sarima(ts ,3 ,2 ,3 ,0 ,1 ,2 ,12)
 
+#Estimating coefficients
+model1$fit$coef
+
 # diagnostic checking
 
 # 1. normality
