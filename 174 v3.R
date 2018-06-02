@@ -63,7 +63,7 @@ for (P in c (0:3) ) {
   for (Q in c (0:3) ) {
     for (p in c (0:3) ){
       for (q in c (0:3) ){
-        Fit[[i+1]]=sarima (ts ,p ,2 ,q ,P ,1 ,Q ,12 , Model = TRUE , details = FALSE )$fit
+        Fit[[i+1]]=sarima (ts.log ,p ,2 ,q ,P ,1 ,Q ,12 , Model = TRUE , details = FALSE )$fit
         plot.new()
         AICc[i+1,1]=p
         AICc[i+1,2]=q
