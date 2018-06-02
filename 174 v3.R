@@ -63,13 +63,13 @@ for (P in c (0:3) ) {
   for (Q in c (0:3) ) {
     for (p in c (0:3) ){
       for (q in c (0:3) ){
-        Fit[[i+1]]=sarima (ts.log ,p ,2 ,q ,P ,1 ,Q ,12 , Model = TRUE , details = FALSE )$fit
+        Fit[[i+1]]=sarima (ts.log,p ,2 ,q ,P ,1 ,Q ,12 , Model = TRUE , details = FALSE )$fit
         plot.new()
         AICc[i+1,1]=p
         AICc[i+1,2]=q
         AICc[i+1,3]=P
         AICc[i+1,4]=Q
-        AICc[i+1,5]=sarima(Total_Energy_Electric_Power,p,1,q,P,1,Q,12,Model=TRUE,details=FALSE)$AICc
+        AICc[i+1,5]=sarima(ts.log,p,1,q,P,1,Q,12,Model=TRUE,details=FALSE)$AICc
         plot.new()
         AICc[i+1,6]=shapiro.test(resid(Fit[[i+1]]))$p.value
         AICc[i+1,7]=Box.test(resid(Fit[[i+1]]),type=c("Ljung-Box"),lag=12)$p.value
@@ -92,8 +92,8 @@ AICc_cmp<-subset(AICc_cmp,AICc_cmp$X.LjungBox.>0.05)
 # final models to consider 
 View(AICc_cmp)
 
-model1 = sarima(ts ,3 ,2 ,3 ,0 ,1 ,1 ,12) #astsa package
-model2 = sarima(ts ,3 ,2 ,3 ,0 ,1 ,2 ,12)
+model1 = sarima(ts.log ,3 ,2 ,3 ,0 ,1 ,1 ,12) #astsa package
+model2 = sarima(ts.log ,3 ,2 ,3 ,0 ,1 ,2 ,12)
 
 #Estimating coefficients
 model1$fit$coef
