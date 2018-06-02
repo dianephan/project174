@@ -27,6 +27,7 @@ bcTransform = boxcox(ts ~ t,plotit = TRUE)
 lambda <- bcTransform$x[which(bcTransform$y == max(bcTransform$y))]
 # close to 0 so we'll use log of the data
 ts.log<-log(Total_Energy_Electric_Power)
+ts.log<-tsclean(ts.log)
 plot(ts, main = "Original Time Series")
 plot(ts.log, main = "Log-Transformed Time Series")
 
