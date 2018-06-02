@@ -10,8 +10,9 @@ library(forecast)
 
 # read in data
 getwd()
-emissiondata<-read.csv("MER_T12_06.csv",header=TRUE)
-TXEIEUS<-read.csv("TXEIEUS.csv",header=TRUE)
+setwd("/Users/denniswang/Desktop")
+emissiondata<-read.csv("/Users/denniswang/Desktop/MER_T12_06.csv",header=TRUE)
+TXEIEUS<-read.csv("/Users/denniswang/Desktop/Pstat 174 files/TXEIEUS.csv",header=TRUE)
 # time series data
 Total_Energy_Electric_Power <- ts(TXEIEUS[,3],start=c(1996,1),frequency=12) 
 
@@ -26,15 +27,20 @@ bcTransform = boxcox(ts ~ t,plotit = TRUE)
 lambda <- bcTransform$x[which(bcTransform$y == max(bcTransform$y))]
 # close to 0 so we'll use log of the data
 ts.log<-log(Total_Energy_Electric_Power)
-plot(ts, main = "Log-Transformed Time Series")
+plot(ts, main = "Original Time Series")
+plot(ts.log, main = "Log-Transformed Time Series")
 
 # decomposing
-ggtsdisplay(ts,lag.max=120, main = "Time Series with ACF and PACF")
+ggtsdisplay(ts,lag.max=120, main = "Original Time Series with ACF and PACF")
 Decomp=decompose(ts) # survMisc package
 autoplot(Decomp,main="Decomposed Time Series") + theme(axis.text.y=element_text(size=6),text=element_text(size=10))+ xlab("Year") #forecast package
+  #log transformed decompose data
+ggtsdisplay(ts.log,lag.max=120, main = "Log-Transformed Time Series with ACF and PACF")
+Decomp2=decompose(ts.log) # survMisc package
+autoplot(Decomp2,main="Decomposed Time Series") + theme(axis.text.y=element_text(size=6),text=element_text(size=10))+ xlab("Year")
 
 # detrending the data
-dif2 = diff (ts , lag = 2)
+dif2 = diff (ts.log , lag = 2)
 ggtsdisplay ( dif2 , lag.max = 60, main = "De-Trended Data")
 autoplot(decompose(dif2),main="De-Trended Data") +
   theme(axis.text.y=element_text(size=6),text=element_text(size=10))+
@@ -73,7 +79,7 @@ for (P in c (0:3) ) {
 }
 
 # gives error and 12-13 warnings
- AICc<-data.frame(AICc)
+AICc<-data.frame(AICc)
 # sort by AICc ( Increasing order)
 AICc_sorted<-AICc[order(AICc$X.AICc.),]
 # Filter the models by Shapiro test
@@ -83,15 +89,14 @@ AICc_cmp<-subset(AICc_sorted,AICc_sorted$X.Shapiro.>0.05)
 AICc_cmp<-subset(AICc_cmp,AICc_cmp$X.LjungBox.>0.05)
 
 # final models to consider 
-AICc_cmp
+View(AICc_cmp)
 
 model1 = sarima(ts ,3 ,2 ,3 ,0 ,1 ,1 ,12) #astsa package
 model2 = sarima(ts ,3 ,2 ,3 ,0 ,1 ,2 ,12)
 
 #Estimating coefficients
 model1$fit$coef
-
-# diagnostic checking
+ # diagnostic checking
 
 # 1. normality
 par ( mfrow = c (1 ,2) )
@@ -119,15 +124,21 @@ ggarrange ( p11 ,p22 , nrow = 2, ncol = 2) #ggpubr
 
 # choosing our fit
 fit=model1 #sarima (3,2,3)x(0,1,1)_12
-#Estimating coefficients
-model1$fit$coef
 
 # Forecast and transfer to original scale
 library(forecast)
 
-TXEIEUS2 <- read.csv("TXEIEUS2.csv",header=TRUE)
+TXEIEUS2 <-read.csv("/Users/denniswang/Desktop/Pstat 174 files/TXEIEUS2.csv",header=TRUE)
 ts2 <- ts(TXEIEUS2$Value,start=c(1996,1),frequency=12) # we include the actual values for 2016
+ts2.log<-log(ts2)
 
 predict<-forecast(ts, level=c(95))
+predict2<-forecast(ts2.log, level=c(95)) #log-transformed one
+#Original forecasting transformation
 autoplot(ts2,main="Original Data") + ylab("Carbon Emission Per metric Ton actual values")+xlab("Month")+theme(legend.position="None")
 autoplot(predict, main="Forecasted Values") + ylab("Carbon Emission Per metric Ton predicted values")+xlab("Month")+theme(legend.position="None")
+
+#Log transformed
+autoplot(ts2.log,main="Log-transformed Original Data") + ylab("Carbon Emission Per metric Ton actual values")+xlab("Month")+theme(legend.position="None")
+autoplot(predict2, main="Log-transformed Forecasted Values") + ylab("Carbon Emission Per metric Ton predicted values")+xlab("Month")+theme(legend.position="None")
+
